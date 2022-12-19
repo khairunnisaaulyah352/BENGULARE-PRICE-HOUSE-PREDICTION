@@ -8,6 +8,7 @@ Tempat tinggal adalah kebutuhan primer bagi manusia untuk berlindung dan hidup m
 Seperti yang kita ketahui, harga properti rumah dari tahun ketahun semakin tidak pasti. Sehingga sulit untuk memastikan harga sebuah rumah di Bengaluru.Apalagi sebagian calon pembeli tidak mengerti dan tidak paham tentang harga pasar rumah.
 
 Dengan demikian, maka dilakukanlah penelitian ini untu mengetahui harga pasar rumah. penelitian ini dilakukan dengan metode machine learning.Diharapkan agar calon pembeli mengerti tentang harga pasar rumah  sehingga dapat memilih rumah yang sesuai.
+Referensi :[House Price Prediction Using Machine Learning](https://www.irejournals.com/formatedpaper/1702692.pdf)
 
 ### Business Understanding
 
@@ -17,7 +18,6 @@ Perusahaan membuka jasa konsultasi harga sewa rumah dan apartemen ke konsumen.
 ### Problem Statement
 1. Bagaimana cara memproses data agar dapat dilatih dengan baik oleh model?
 2. Berapa harga jual rumah di pasaran berdasarkan karakteristik tertentu?
-3. 
 ### Goals
 1. Melakukan persiapan data untuk dapat dilatih oleh model.
 2. Membuat model machine learning yang dapat memprediksi harga jual rumah seakurat mungkin berdasarkan fitur tertentu.
@@ -43,6 +43,204 @@ variabel yang terddapat dalam dataset:
 - total_sqft: ukuran besar rumah tersebut
 - bath : jumlah kamar mandi dalam rumah
 - balcony: jumal balcony dalam rumah
-- price: mempresentasikan harga rumah tersebut (fitur target)\\
+- price: mempresentasikan harga rumah tersebut (fitur target)
+
+### Menampilkan informasi dari dataset
+Pada penelitian ini digunakan fungsi info() untuk menampilkan informasi dari dataset
+<p align="center">
+<img src="https://user-images.githubusercontent.com/71605581/208458869-8a61aa18-8513-44ac-a6dc-53a45c6e3623.png" width="250"  height="250"> </p>
+dari info diatas, dapat dilihat bahwa:
+- Terdapat 6 kolom dengan tipe object, yaitu: area_type, availability, location, size, society, total_sqft. Kolom ini merupakan categorical features (fitur non-numerik).
+- Terdapat 3 kolom numerik dengan tipe data float64 yaitu: bath,balcony,price. bath,balcony merupakan fitur numerik yang merupakan hasil pengukuran secara fisik. price, merupakan target fitur kita.
+
+### Menampilkan statistik dataset
+Pada penelitian ini digunakan fungsi describe() untuk menampilkan statistik dari dataset,
+<p align="center">
+<img src="https://user-images.githubusercontent.com/71605581/208471835-86c9b414-ef52-404b-91a3-84df49d75926.png" width="430"  height="380"> </p>
+Fungsi describe() memberikan informasi sebagai berikut:
+
+- Count adalah jumlah sampel pada data.
+- Mean adalah nilai rata-rata
+- Std adalah standar deviasi
+- Min yaitu nilai minimum setiap kolom
+- 25% adalah kuartil pertama. Kuartil adalah nilai yang menandai batas interval dalam empat bagian sebaran yang sama.
+- 50% adalah kuartil kedua, atau biasa juga disebut median (nilai tengah).
+- 75% adalah kuartil ketiga
+- Max adalah nilai maksimum.
+
+### Menghapus kolom yang tidak dibutuhkan 
+<p align="center">
+<img src="https://user-images.githubusercontent.com/71605581/208474102-2408ad41-78cc-44b8-a54e-d91b9b97fe9b.png" width="250"  height="250"> </p>
+setelah dihapus tersisa 6 fitur. 
+- 3 fitur tipe object yaitu area_type,size dan total_sqft 
+- 3 fitur lainnya tipe float64 yaitu bath, balcony dan price
+
+### Menangani Missing Value
+pada penelitian ini daya menggunakan dua cara unttuk menemukan nilai missing value.
+- cara pertama menggunakan fungsi isnull().sum(). hasil dari menggunakan fungsi tersebut yaitu.
+ <p align="center">
+ <img src="https://user-images.githubusercontent.com/71605581/208482612-c4c76f04-9106-4dac-a1f7-6202447f0311.png" width="180"  height="200"> </p>
+
+  Dari gambar diatas dapat dilihat bahwa terdapat 3 fitur yang terdapat missing value yaitu size, bath dan balcony. kemudian missing value tersebut dibuang menggunakan fungsi .dropna(). sehingga menjadi seperti berikut.
+  <p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208482678-5481af33-a50b-4dd9-a085-d0384292ede7.png" width="180"  height="200"> </p>
+
+- cara kedua yaitu menggunakan fungsi .loc() difitur bath, balcony, total_sqft
+<p align="center">
+<img src="https://user-images.githubusercontent.com/71605581/208482751-9880b982-b0ed-4d4e-aae9-a1babb986dfa.png" width="300"  height="120"> </p>
+  Diantara 3 fitur tersebut, terdapat 1 fitur yang memiliki missing value yaitu fitur balcony.
+Dicek apakah data yang bernilai 0 dalam fitur balcony terdapat juga pada fitur lain seperti berikut:
+<p align="center">
+<img src="https://user-images.githubusercontent.com/71605581/208482791-25056733-c548-453d-b6fe-27a786c2e472.png" width="380"  height="430"> </p>
+  Drop missing value tersebut. sehingga jumlah sampel berkurang.
+  <p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208482816-ac9f3d12-8e06-44ac-9774-aa1e22a5640f.png" width="150"  height="80">
+  </p>
+  
+### Menangani Outliers
+
+outliers adalah sampel yang nilainya sangat jauh dari cakupan umum data utama. Ia adalah hasil pengamatan yang kemunculannya sangat jarang dan berbeda dari data hasil pengamatan lainnya.
+Ada beberapa teknik untuk menangani outliers, antara lain:
+- Hypothesis Testing
+- Z-score method
+- IQR Method
+
+Pada penelitian ini, untuk mendeteksi outliers diggunakan teknik visualisasi data (boxplot). ddan menangani outliers dengan menggunakan teknik IQR method. IQR adalah singkatan dari Inter Quartile Range. Untuk memahami apa itu IQR, mari kita ingat lagi konsep kuartil. Kuartil dari suatu populasi adalah tiga nilai yang membagi distribusi data menjadi empat sebaran. Seperempat dari data berada di bawah kuartil pertama (Q1), setengah dari data berada di bawah kuartil kedua (Q2), dan tiga perempat dari data berada di kuartil ketiga (Q3). Dengan demikian interquartile range atau IQR = Q3 - Q1.
+Mengecek outliners difitur bath
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208490912-dbd4400a-ce0d-47a5-94d6-8f4d7a312dfa.png" width="180"  height="200"> </p>
+Mengecek outliners difitur balcony
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208491087-2f3afdc8-570f-4b41-9c9b-8bf53c0b21d2.png" width="180"  height="200"> </p>
+  Dari 2 fitur dapat disimpulkan bahwa terdapat outliers di fitur bath. maka digunakanlah metode IQR untuk mengidentifikasi outlier yang berada di luar Q1 dan Q3. Nilai apa pun yang berada di luar batas ini dianggap sebagai outlier. 
+persamaannya adalah:
+- Batas bawah = Q1 - 1.5 * IQR
+- Batas atas = Q3 + 1.5 * IQR
+
+output yaitu : 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208491917-57933a73-cfef-42d9-8bca-64a2ebae4b73.png" width="80"  height="40"></p>
+Dataset sekarang telah bersih dan memiliki 10.245 sampel.
+
+## Data Preparation
+### Encoding Fitur Kategori
+#### menambahkan fitur bhk yang didapat dari mengubah fitur size ke int
+untuk menambahkan fitur bhk maka diperlukan fungsi .unique untuk mengembalikan elemen unik array yang diurutkan.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208494097-28670e55-3b7c-4f56-85ee-bc719186d99b.png" width="400"  height="80"></p>
+
+Dari hasil tersebut digunakanlah fungsi .apply(lambda x: int(x.split(' ')[0]) untuk membagi dan mengubah fitur dan fungsi .drop untuk membuang fitur size yang sudah tidak digunakan lagi dengan hasil seperti berikut.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208494116-c1a68209-b2e0-499c-9d87-b1e5c99d9c2e.png" width="300"  height="150"></p>
+
+#### Mengubah nilai total_sqft ke nilai float
+Mengubah fitur tipe total_sqft dari objek ke float64 digunakanlah fungsi convert_sqft_tonum(x) dan diapply kedalam fitur total_sqft tersebut. 
+output:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208498003-06928080-09aa-4552-b356-a6c9f797e011.png" width="300"  height="150"></p>
+
+
+#### Membagi area_type kedalam grup 
+terdapat 4 area didalam fitur area_type, yaitu Super built-up Area, Built-up Area, Plot Area, Carpet Area. karena hal itu maka setiap area akan dikelompokkan dan diubah menjadi angka menggunakan fungsi .replace 
+output: 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208497973-25d1970e-15d5-4326-afc8-3236165631f5.png" width="300"  height="150"></p>
+
+### Train-Test-Split
+  Membagi dataset menjadi data latih (train) dan data uji (test) merupakan hal yang harus kita lakukan sebelum membuat model. Kita perlu mempertahankan sebagian data yang ada untuk menguji seberapa baik generalisasi model terhadap data baru. Ssetiap transformasi dilakukan pada data juga merupakan bagian dari model. Karena data uji (test set) berperan sebagai data baru, kita perlu melakukan semua proses transformasi dalam data latih. Tujuannya adalah agar tidak mengotori data uji dengan informasi yang kita dapat dari data latih.
+
+untuk melakukan pembagian dataset, kita perlu mengimport library split data yaitu train_test_split, kemudian buat 2 variabel yaitu X yang berfungsi untuk menghapus kolom charges dan y untuk menampilkan kolom charges lalu bagi dataset menjadi 4 variabel baru yaitu X_train, X_test, y_train, y_test dengan library train_test_split dengan parameter yang digunakan yaitu :
+
+- X = berfungsi untuk menghapus kolom charges
+- y = berfungsi menampilkan kolom charges
+- test_size = adalah ukuran pembagian dataset yaitu sekitar 80 % untuk training dan 20 % untuk testing, data testing ini bertujuan untuk mengukur kinerja model pada data baru.
+- random_state = digunakan untuk mengontrol random number generator yang digunakan, di penelitian ini diggunakan random_state = 123
+
+Untuk mengecek jumlah sampel pada masing-masing bagian digunnakan fungsi print
+output: 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208497956-81c5f4e1-049d-4b6a-9313-7c53532cc771.png" width="450"  height="150"></p>
+  
+### Standarisasi
+Standardisasi adalah teknik transformasi yang digunakan dalam tahap persiapan pemodelan. kita akan menggunakan teknik StandarScaler dari library Scikitlearn. StandardScaler melakukan proses standarisasi fitur dengan mengurangkan mean (nilai rata-rata) kemudian membaginya dengan standar deviasi untuk menggeser distribusi.  StandardScaler menghasilkan distribusi dengan standar deviasi sama dengan 1 dan mean sama dengan 0. Sekitar 68% dari nilai akan berada di antara -1 dan 1. 
+Untuk menghindari kebocoran informasi pada data uji, kita hanya akan menerapkan fitur standarisasi pada data latih. Kemudian, pada tahap evaluasi, kita akan melakukan standarisasi pada data uji.
+output: 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208509850-758d1e53-1893-42f0-98f1-9f3e4affdeb7.png" width="350"  height="250"></p>
+
+
+proses standarisasi mengubah nilai rata-rata (mean) menjadi 0 dan nilai standar deviasi menjadi 1. Untuk mengecek nilai mean dan standar deviasi pada setelah proses standarisasi digunakan fungsi .describe()
+output:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208509907-80014e24-1299-4f4d-ab8a-0b80c1817b80.png" width="350"  height="250"></p>
+
+sekarang nilai mean = 0 dan standar deviasi = 1
+
+## Model Development
+
+Pada tahap ini, model machine learning akan dikembangkan dengan tiga algoritma. Kemudian, mengevaluasi performa masing-masing algoritma dan menentukan algoritma mana yang memberikan hasil prediksi terbaik. Ketiga algoritma yang akan kita gunakan, antara lain:
+
+1. K-Nearest Neighbor
+2. Random Forest
+3. Boosting Algorithm
+
+### K-Nearest Neighbor
+Algoritma KNN menggunakan ‘kesamaan fitur’ untuk memprediksi nilai dari setiap data yang baru. Dengan kata lain, setiap data baru diberi nilai berdasarkan seberapa mirip titik tersebut dalam set pelatihan.
+
+KNN bekerja dengan membandingkan jarak satu sampel ke sampel pelatihan lain dengan memilih sejumlah k tetangga terdekat (dengan k adalah sebuah angka positif). Nah, itulah mengapa algoritma ini dinamakan K-nearest neighbor (sejumlah k tetangga terdekat). KNN bisa digunakan untuk kasus klasifikasi dan regresi. Pada kasus ini, kita akan menggunakannya untuk kasus regresi.
+
+Kita menggunakan k = 10 tetangga dan metric Euclidean untuk mengukur jarak antara titik. Pada tahap ini kita hanya melatih data training dan menyimpan data testing untuk tahap evaluasi yang akan dibahas di Modul Evaluasi Model.
+
+### Random Forest
+Algoritma random forest adalah salah satu algoritma supervised learning. Ia dapat digunakan untuk menyelesaikan masalah klasifikasi dan regresi. Random forest juga merupakan algoritma yang sering digunakan karena cukup sederhana tetapi memiliki stabilitas yang mumpuni. 
+
+Random forest merupakan salah satu model machine learning yang termasuk ke dalam kategori ensemble (group) learning. Apa itu model ensemble? Sederhananya, ia merupakan model prediksi yang terdiri dari beberapa model dan bekerja secara bersama-sama. Ide dibalik model ensemble adalah sekelompok model yang bekerja bersama menyelesaikan masalah. Sehingga, tingkat keberhasilan akan lebih tinggi dibanding model yang bekerja sendirian. Pada model ensemble, setiap model harus membuat prediksi secara independen. Kemudian, prediksi dari setiap model ensemble ini digabungkan untuk membuat prediksi akhir. 
+
+cara untuk menerapkan algoritma ini apda dataset yaitu, pertama, Anda mengimpor RandomForestRegressor dari library scikit-learn. Anda juga mengimpor mean_squared_error sebagai metrik untuk mengevaluasi performa model. Selanjutnya, Anda membuat variabel RF dan memanggil RandomForestRegressor dengan beberapa nilai parameter. Berikut adalah parameter-parameter yang digunakan:
+
+- n_estimator: jumlah trees (pohon) di forest. Di sini kita set n_estimator=50.
+- max_depth: kedalaman atau panjang pohon. Ia merupakan ukuran seberapa banyak pohon dapat membelah (splitting) untuk membagi setiap node ke dalam jumlah pengamatan yang diinginkan.
+- random_state: digunakan untuk mengontrol random number generator yang digunakan. 
+- n_jobs: jumlah job (pekerjaan) yang digunakan secara paralel. Ia merupakan komponen untuk mengontrol thread atau proses yang berjalan secara paralel. n_jobs=-1 artinya semua proses berjalan secara paralel.
+
+### Boosting Algorithm
+boosting, algoritma ini bertujuan untuk meningkatkan performa atau akurasi prediksi. Caranya adalah dengan menggabungkan beberapa model sederhana dan dianggap lemah (weak learners) sehingga membentuk suatu model yang kuat (strong ensemble learner). Algoritma boosting muncul dari gagasan mengenai apakah algoritma yang sederhana seperti linear regression dan decision tree dapat dimodifikasi untuk dapat meningkatkan performa. 
+Algoritma boosting terdiri dari dua metode:
+- Adaptive boosting
+- Gradient boosting
+Pada kasus ini, kita akan menggunakan metode adaptive boosting.
+parameter yang digunakan adalah:
+- learning_rate: bobot yang diterapkan pada setiap regressor di masing-masing proses iterasi boosting.
+- random_state: digunakan untuk mengontrol random number generator yang digunakan.
+
+## Evaluasi Model
+Metrik yang akan digunakan pada prediksi ini adalah MSE atau Mean Squared Error yang menghitung jumlah selisih kuadrat rata-rata nilai sebenarnya dengan nilai prediksi. MSE didefinisikan dalam persamaan berikut: 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208504601-c11dd03c-6705-446c-a668-66b9cfc9ebb3.png" width="150"  height="100"></p>
+Keterangan:
+
+- N = jumlah dataset
+
+- yi = nilai sebenarnya
+
+- y_pred = nilai prediksi
+
+Sebelum menghitung nilai MSE dalam model, kita perlu melakukan proses scaling fitur numerik pada data uji. Sebelumnya, kita baru melakukan proses scaling pada data latih untuk menghindari kebocoran data. Sekarang, setelah model selesai dilatih dengan 3 algoritma, yaitu KNN, Random Forest, dan Adaboost, kita perlu melakukan proses scaling terhadap data uji. Hal ini harus dilakukan agar skala antara data latih dan data uji sama dan kita bisa melakukan evaluasi.
+Hasil evaluasi pada data latih dan data test adalah sebagai berikut:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208509662-0205b0c3-41a6-474a-9bee-4bca2f1bb55d.png" width="200"  height="100"></p>
+
+
+Untuk memudahkan, mari kita plot metrik tersebut dengan bar chart, output:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208509610-a0fa3e58-dd4c-4d0b-96fd-67e2a36bc3c3.png" width="300"  height="200"></p>
+
+Dari gambar di atas, terlihat bahwa, model Random Forest (RF) memberikan nilai eror yang paling kecil. Sedangkan model dengan algoritma Boosting memiliki eror yang paling besar (berdasarkan grafik, angkanya di atas 800). Model inilah yang akan kita pilih sebagai model terbaik untuk melakukan prediksi harga diamonds.
+Untuk mengujinya, mari kita buat prediksi menggunakan beberapa harga dari data test.
+
+Hasilnya adalah sebagai berikut:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/71605581/208509528-5e33ea39-d550-4b6e-8fb4-b343d5ad306e.png" width="350"  height="100"></p>
+Terlihat bahwa prediksi dengan Random Forest (RF) memberikan hasil yang paling mendekati
 
 
