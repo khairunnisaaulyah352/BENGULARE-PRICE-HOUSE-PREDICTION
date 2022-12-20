@@ -46,9 +46,19 @@ variabel yang terddapat dalam dataset:
 
 ### Menampilkan informasi dari dataset
 Pada penelitian ini digunakan fungsi info() untuk menampilkan informasi dari dataset
-<p align="center">
-<img src="https://user-images.githubusercontent.com/71605581/208458869-8a61aa18-8513-44ac-a6dc-53a45c6e3623.png" width="250"  height="250"> </p>
-<p align="center"> Gambar 1.  menampilkan informasi </p>
+
+| # |       column | Non-Null Count    | Dtype   |
+|--:|-------------:|-------------------|---------|
+| 0 |    area_type | 13320    non-null | object  |
+| 1 | availability | 13320    non-null | object  |
+| 2 |     location | 13319    non-null | object  |
+| 3 | size         | 7818     non-null | object  |
+| 4 | society      | 7818     non-null | object  |
+| 5 | total_sqft   | 13320    non-null | object  |
+| 6 | bath         | 13247    non-null | float64 |
+| 7 | balcony      | 12711    non-null | float64 |
+| 8 | price        | 13320    non-null | float64 |
+
 dari info diatas, dapat dilihat bahwa:
 - Terdapat 6 kolom dengan tipe object, yaitu: area_type, availability, location, size, society, total_sqft. Kolom ini merupakan categorical features (fitur non-numerik).
 - Terdapat 3 kolom numerik dengan tipe data float64 yaitu: bath,balcony,price. bath,balcony merupakan fitur numerik yang merupakan hasil pengukuran secara fisik. price, merupakan target fitur kita.
@@ -78,9 +88,16 @@ Fungsi describe() memberikan informasi sebagai berikut:
 - Max adalah nilai maksimum.
 
 ### Menghapus kolom yang tidak dibutuhkan 
-<p align="center">
-<img src="https://user-images.githubusercontent.com/71605581/208474102-2408ad41-78cc-44b8-a54e-d91b9b97fe9b.png" width="250"  height="250"> 
-</p>
+
+| # |       column | Non-Null Count    | Dtype   |
+|--:|-------------:|-------------------|---------|
+| 0 |    area_type | 13320    non-null | object  |
+| 1 | size         | 13304    non-null | object  |
+| 2 | total_sqft   | 13320    non-null | object  |
+| 3 | bath         | 13247    non-null | float64 |
+| 4 | balcony      | 12711    non-null | float64 |
+| 5 | price        | 13320    non-null | float64 |
+
 <p align="center"> Gambar 2.  menampilkan informasi</p>
 setelah dihapus tersisa 6 fitur. 
 - 3 fitur tipe object yaitu area_type,size dan total_sqft 
@@ -119,11 +136,7 @@ Dicek apakah data yang bernilai 0 dalam fitur balcony terdapat juga pada fitur l
 | 13299 | Super built-up Area |     2856.0 |  5.0 |     0.0 | 154.500 |   4 |
 | 13315 |       Built-up Area |     3453.0 |  4.0 |     0.0 | 231.000 |   5 |
 
-  Drop missing value tersebut. sehingga jumlah sampel berkurang.
-  <p align="center">
-  <img src="https://user-images.githubusercontent.com/71605581/208482816-ac9f3d12-8e06-44ac-9774-aa1e22a5640f.png" width="150"  height="80">
-  </p>
-    <p align="center"> Gambar 6. output missing value </p>
+  Drop missing value tersebut. sehingga jumlah sampel berkurang menjadi 11682 dan terdapat 6 fitur.
   
 ### Menangani Outliers
 
@@ -170,9 +183,15 @@ Dari hasil tersebut digunakanlah fungsi .apply(lambda x: int(x.split(' ')[0]) un
 #### Mengubah nilai total_sqft ke nilai float
 Mengubah fitur tipe total_sqft dari objek ke float64 digunakanlah fungsi convert_sqft_tonum(x) dan diapply kedalam fitur total_sqft tersebut. 
 output:
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/71605581/208498003-06928080-09aa-4552-b356-a6c9f797e011.png" width="300"  height="150"></p>
- <p align="center"> Gambar 10. output informasi  </p>
+
+| # |       column | Non-Null Count    | Dtype   |
+|--:|-------------:|-------------------|---------|
+| 0 | area_type    | 10245    non-null | object  |
+| 1 | total_sqft   | 10245    non-null | float64 |
+| 2 | bath         | 10245    non-null | float64 |
+| 3 | balcony      | 10245    non-null | float64 |
+| 4 | price        | 10245    non-null | float64 |
+| 5 | BHK          | 10245    non-null | int64   |
 
 #### Membagi area_type kedalam grup 
 terdapat 4 area didalam fitur area_type, yaitu Super built-up Area, Built-up Area, Plot Area, Carpet Area. karena hal itu maka setiap area akan dikelompokkan dan diubah menjadi angka menggunakan fungsi .replace 
@@ -194,14 +213,14 @@ untuk melakukan pembagian dataset, kita perlu mengimport library split data yait
 - X = berfungsi untuk menghapus kolom charges
 - y = berfungsi menampilkan kolom charges
 - test_size = adalah ukuran pembagian dataset yaitu sekitar 80 % untuk training dan 20 % untuk testing, data testing ini bertujuan untuk mengukur kinerja model pada data baru.
-- random_state = digunakan untuk mengontrol random number generator yang digunakan, di penelitian ini diggunakan random_state = 123
+- random_state = untuk mengontrol random number generator. penelitian ini menggunakan random_state = 55
 
-Untuk mengecek jumlah sampel pada masing-masing bagian digunnakan fungsi print
+Untuk mengecek jumlah sampel pada masing-masing bagian digunakan fungsi print
 output: 
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/71605581/208497956-81c5f4e1-049d-4b6a-9313-7c53532cc771.png" width="450"  height="150"></p>
-   <p align="center"> Gambar 11. Hasil Split dataset</p>
-  
+- Total sampel diseluruh dataset: 10245
+- Total sampel ditrain dataset: 9220
+- Total sampel ditest dataset: 1025
+
 ### Standarisasi
 Standardisasi adalah teknik transformasi yang digunakan dalam tahap persiapan pemodelan. kita akan menggunakan teknik StandarScaler dari library Scikitlearn. StandardScaler melakukan proses standarisasi fitur dengan mengurangkan mean (nilai rata-rata) kemudian membaginya dengan standar deviasi untuk menggeser distribusi.  StandardScaler menghasilkan distribusi dengan standar deviasi sama dengan 1 dan mean sama dengan 0. Sekitar 68% dari nilai akan berada di antara -1 dan 1. 
 Untuk menghindari kebocoran informasi pada data uji, kita hanya akan menerapkan fitur standarisasi pada data latih. Kemudian, pada tahap evaluasi, kita akan melakukan standarisasi pada data uji.
@@ -218,7 +237,7 @@ output:
 
 proses standarisasi mengubah nilai rata-rata (mean) menjadi 0 dan nilai standar deviasi menjadi 1. Untuk mengecek nilai mean dan standar deviasi pada setelah proses standarisasi digunakan fungsi .describe()
 output:
- |       | total_sqft |      bath |   balcony | area_type |       BHK |
+|       | total_sqft |      bath |   balcony | area_type |       BHK |
 |------:|-----------:|----------:|----------:|----------:|----------:|
 | count |  9220.0000 | 9220.0000 | 9220.0000 | 9220.0000 | 9220.0000 |
 |  mean |    -0.0000 |   -0.0000 |   -0.0000 |   -0.0000 |   -0.0000 |
@@ -297,10 +316,12 @@ Untuk memudahkan, mari kita plot metrik tersebut dengan bar chart, output:
 Dari gambar di atas, terlihat bahwa, model *Random Forest* (RF) memberikan nilai eror yang paling kecil. Sedangkan model dengan algoritma Boosting memiliki eror yang paling besar. Model inilah yang akan kita pilih sebagai model terbaik untuk melakukan prediksi harga jual rumah di bengalure.Untuk mengujinya, kita buat prediksi menggunakan beberapa harga dari data test.
 
 Hasilnya adalah sebagai berikut:
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/71605581/208509528-5e33ea39-d550-4b6e-8fb4-b343d5ad306e.png" width="350"  height="100"></p>
-   <p align="center"> Gambar 13. hasil prediksi </p>
-Terlihat pada gambar 12 adalah hasil dari prediksi dengan 3 ALgoritma yaitu *Random Forest (RF)*, *K-Nearest Neighbor* dan *Boosting alghorthm*. pada gambar 13 ini dapat dijabarkan bahwa algortima *Random Forest (RF)* memberikan hasil yang paling mendekati dengan hasil prediksi 83.5 sedangkan algoritma *Boosting* dengan hasil prediksi terjauh yaitu 72.5.
+- y_true = 88.0
+- prediksi_KNN = 78.5
+- prediksi_RF = 83.5
+- prediksi_Boosting = 72.5
+
+Terlihat pada gambar 12 adalah hasil dari prediksi dengan 3 ALgoritma yaitu *Random Forest (RF)*, *K-Nearest Neighbor* dan *Boosting alghorthm*. pada hasil diatas dapat dijabarkan bahwa algortima *Random Forest (RF)* memberikan hasil yang paling mendekati dengan hasil prediksi 83.5 sedangkan algoritma *Boosting* dengan hasil prediksi terjauh yaitu 72.5.
 
 Referensi :
 
